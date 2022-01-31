@@ -23,7 +23,7 @@ package:debian:
     - wget -O- https://repository.salamek.cz/deb/salamek.gpg | tee /usr/share/keyrings/salamek-archive-keyring.gpg
     - echo "deb     [signed-by=/usr/share/keyrings/salamek-archive-keyring.gpg] https://repository.salamek.cz/deb/pub all main" | tee /etc/apt/sources.list.d/salamek.cz.list
     - apt-get update -qy
-    - apt-get install -y sudo python3-flask-celery-helper python3-dev dh-python python3-pip python3-stdeb python3-celery python3-markupsafe python3-eventlet python3-psycopg2 python3-dateutil python3-lxml python3-docopt python3-netifaces python3-yaml python3-raven python3-flask-migrate python3-flask-babel python3-socketio python3-flask-socketio python3-kombu rabbitmq-server
+    - apt-get install -y sudo python3-flask-celery-helper python3-dev dh-python python3-pip python3-stdeb python3-celery python3-markupsafe python3-eventlet python3-psycopg2 python3-dateutil python3-lxml python3-docopt python3-netifaces python3-yaml python3-raven python3-flask-migrate python3-flask-babel python3-socketio python3-flask-socketio python3-kombu rabbitmq-server python3-flask-jwt-extended
     - rm -rf "./deb_dist"
     - python3 setup.py --command-packages=stdeb.command bdist_deb
   tags:
