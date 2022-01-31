@@ -1,0 +1,3 @@
+flask_socketio python3-flask-socketio
+python_socketio python3-socketio
+raven python3-raven

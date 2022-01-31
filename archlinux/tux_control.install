@@ -1,0 +1,71 @@
+## arg 1:  the new package version
+pre_install() {
+        :
+}
+
+## arg 1:  the new package version
+post_install() {
+        # Generate default config
+        sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+        locale-gen
+        su - postgres -c "initdb --locale en_US.UTF-8 -D '/var/lib/postgres/data'"
+        if ! systemctl is-enabled --quiet postgresql; then
+            systemctl enable postgresql
+        fi
+
+        if ! systemctl is-active --quiet postgresql; then
+            systemctl restart postgresql
+        fi
+
+        if ! systemctl is-enabled --quiet rabbitmq; then
+            systemctl enable rabbitmq
+        fi
+
+        if ! systemctl is-active --quiet rabbitmq; then
+            systemctl restart rabbitmq
+        fi
+
+        # Disable audits
+        systemctl mask systemd-journald-audit.socket
+        tux-control post_install --config_prod
+        systemctl daemon-reload
+        systemctl start tux-control
+        systemctl enable tux-control
+        systemctl start tux-control_celeryworker
+        systemctl enable tux-control_celeryworker
+        systemctl start tux-control_celerybeat
+        systemctl enable tux-control_celerybeat
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+pre_upgrade() {
+        :
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+post_upgrade() {
+        # Disable audits
+        systemctl mask systemd-journald-audit.socket
+
+        tux-control migrations upgrade
+        systemctl daemon-reload
+
+        # If PREVENT_RESTART is not defined, restart...
+        if [[ -z "${PREVENT_RESTART}" ]]; then
+            systemctl restart tux-control
+            systemctl restart tux-control_celeryworker
+            systemctl restart tux-control_celerybeat
+        fi
+}
+
+## arg 1:  the old package version
+pre_remove() {
+        :
+}
+
+## arg 1:  the old package version
+post_remove() {
+        :
+}

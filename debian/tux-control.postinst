@@ -1,0 +1,49 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+  abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+  configure)
+    if [ -z "$2" ]; then
+        if ! systemctl is-enabled --quiet postgresql; then
+            systemctl enable postgresql
+        fi
+
+        if ! systemctl is-active --quiet postgresql; then
+            systemctl restart postgresql
+        fi
+
+        if ! systemctl is-enabled --quiet rabbitmq-server; then
+            systemctl enable rabbitmq-server
+        fi
+
+        if ! systemctl is-active --quiet rabbitmq-server; then
+            systemctl restart rabbitmq-server
+        fi
+
+        tux-control post_install --config_prod
+        systemctl daemon-reload
+        systemctl start tux-control
+        systemctl enable tux-control
+        systemctl start tux-control_celeryworker
+        systemctl enable tux-control_celeryworker
+        systemctl start tux-control_celerybeat
+        systemctl enable tux-control_celerybeat
+    else
+
+        systemctl daemon-reload
+        systemctl restart tux-control
+        systemctl restart tux-control_celeryworker
+        systemctl restart tux-control_celerybeat
+    fi
+    ;;
+
+  *)
+    echo "postinst called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

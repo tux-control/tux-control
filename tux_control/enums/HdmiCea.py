@@ -1,0 +1,129 @@
+import enum
+
+
+@enum.unique
+class HdmiCea(enum.IntEnum):
+    MODE_VGA_640X480 = 1
+    MODE_480P_60HZ = 2
+    MODE_480P_60HZ_16_9 = 3
+    MODE_720P_60HZ = 4
+    MODE_1080I_60HZ = 5
+    MODE_480I_60HZ = 6
+    MODE_480I_60HZ_16_9 = 7
+    MODE_240P_60HZ = 8
+    MODE_240P_60HZ_16_9 = 9
+    MODE_480I_60HZ_PIXEL_QUADRUPLING = 10
+    MODE_480I_60HZ_PIXEL_QUADRUPLING_16_9 = 11
+    MODE_240P_60HZ_PIXEL_QUADRUPLING = 12
+    MODE_240P_60HZ_PIXEL_QUADRUPLING_16_9 = 13
+    MODE_480P_60HZ_PIXEL_DOUBLING = 14
+    MODE_480P_60HZ_PIXEL_DOUBLING_16_9 = 15
+    MODE_1080P_60HZ = 16
+    MODE_576P_50HZ = 17
+    MODE_576P_50HZ_16_9 = 18
+    MODE_720P_50HZ = 19
+    MODE_1080I_50HZ = 20
+    MODE_576I_50HZ = 21
+    MODE_576I_50HZ_16_9 = 22
+    MODE_288P_50HZ = 23
+    MODE_288P_50HZ_16_9 = 24
+    MODE_576I_50HZ_PIXEL_QUADRUPLING = 25
+    MODE_576I_50HZ_PIXEL_QUADRUPLING_16_9 = 26
+    MODE_288P_50HZ_PIXEL_QUADRUPLING = 27
+    MODE_288P_50HZ_PIXEL_QUADRUPLING_16_9 = 28
+    MODE_576P_50HZ_PIXEL_DOUBLING = 29
+    MODE_576P_50HZ_PIXEL_DOUBLING_16_9 = 30
+    MODE_1080P_50HZ = 31
+    MODE_1080P_24HZ = 32
+    MODE_1080P_25HZ = 33
+    MODE_1080P_30HZ = 34
+    MODE_480P_60HZ_PIXEL_QUADRUPLING = 35
+    MODE_480P_60HZ_PIXEL_QUADRUPLING_16_9 = 36
+    MODE_576P_50HZ_PIXEL_QUADRUPLING = 37
+    MODE_576P_50HZ_PIXEL_QUADRUPLING_16_9 = 38
+    MODE_1080I_50HZ_REDUCED_BLANKING = 39
+    MODE_1080I_100HZ = 40
+    MODE_720P_100HZ = 41
+    MODE_576P_100HZ = 42
+    MODE_576P_100HZ_16_9 = 43
+    MODE_576I_100HZ = 44
+    MODE_576I_100HZ_16_9 = 45
+    MODE_1080I_120HZ = 46
+    MODE_720P_120HZ = 47
+    MODE_480P_120HZ = 48
+    MODE_480P_120HZ_16_9 = 49
+    MODE_480I_120HZ = 50
+    MODE_480I_120HZ_16_9 = 51
+    MODE_576P_200HZ = 52
+    MODE_576P_200HZ_16_9 = 53
+    MODE_576I_200HZ = 54
+    MODE_576I_200HZ_16_9 = 55
+    MODE_480P_240HZ = 56
+    MODE_480P_240HZ_16_9 = 57
+    MODE_480I_240HZ = 58
+    MODE_480I_240HZ_16_9 = 59
+
+
+"""
+resolution	frequency	notes	hdmi_mode
+VGA (640x480)			1
+480p	60Hz		2
+480p	60Hz	16:9 aspect ratio	3
+720p	60Hz		4
+1080i	60Hz		5
+480i	60Hz		6
+480i	60Hz	16:9 aspect ratio	7
+240p	60Hz		8
+240p	60Hz	16:9 aspect ratio	9
+480i	60Hz	pixel quadrupling	10
+480i	60Hz	pixel quadrupling, 16:9 aspect ratio	11
+240p	60Hz	pixel quadrupling	12
+240p	60Hz	pixel quadrupling, 16:9 aspect ratio	13
+480p	60Hz	pixel doubling	14
+480p	60Hz	pixel doubling, 16:9 aspect ratio	15
+1080p	60Hz		16
+576p	50Hz		17
+576p	50Hz	16:9 aspect ratio	18
+720p	50Hz		19
+1080i	50Hz		20
+576i	50Hz		21
+576i	50Hz	16:9 aspect ratio	22
+288p	50Hz		23
+288p	50Hz	16:9 aspect ratio	24
+576i	50Hz	pixel quadrupling	25
+576i	50Hz	pixel quadrupling, 16:9 aspect ratio	26
+288p	50Hz	pixel quadrupling	27
+288p	50Hz	pixel quadrupling, 16:9 aspect ratio	28
+576p	50Hz	pixel doubling	29
+576p	50Hz	pixel doubling, 16:9 aspect ratio	30
+1080p	50Hz		31
+1080p	24Hz		32
+1080p	25Hz		33
+1080p	30Hz		34
+480p	60Hz	pixel quadrupling	35
+480p	60Hz	pixel quadrupling, 16:9 aspect ratio	36
+576p	50Hz	pixel quadrupling	37
+576p	50Hz	pixel quadrupling, 16:9 aspect ratio	38
+1080i	50Hz	reduced blanking	39
+1080i	100Hz		40
+720p	100Hz		41
+576p	100Hz		42
+576p	100Hz	16:9 aspect ratio	43
+576i	100Hz		44
+576i	100Hz	16:9 aspect ratio	45
+1080i	120Hz		46
+720p	120Hz		47
+480p	120Hz		48
+480p	120Hz	16:9 aspect ratio	49
+480i	120Hz		50
+480i	120Hz	16:9 aspect ratio	51
+576p	200Hz		52
+576p	200Hz	16:9 aspect ratio	53
+576i	200Hz		54
+576i	200Hz	16:9 aspect ratio	55
+480p	240Hz		56
+480p	240Hz	16:9 aspect ratio	57
+480i	240Hz		58
+480i	240Hz	16:9 aspect ratio	59
+
+"""

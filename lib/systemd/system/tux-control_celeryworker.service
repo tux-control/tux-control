@@ -1,0 +1,13 @@
+[Unit]
+Description=Tux Control Web Service Celery worker
+Requires=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RemainAfterExit=no
+RestartSec=5s
+ExecStart=/usr/bin/tux-control celeryworker --config_prod
+
+[Install]
+WantedBy=multi-user.target

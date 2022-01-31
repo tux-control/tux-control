@@ -1,0 +1,8 @@
+.idea
+*.pyc
+/config.py
+/tux_control/static/node_modules/
+/build
+/dist/
+/venv
+/tux_control.egg-info/
