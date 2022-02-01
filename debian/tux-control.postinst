@@ -6,8 +6,7 @@ case "$1" in
     ;;
 
   configure)
-    if ! command -v systemctl &> /dev/null
-    then
+    if ! command -v systemctl > /dev/null; then
       echo "systemctl was not found, ignoring automatic setup"
       echo "You need to make sure that postgresql and rabbitmq-server are running and run"
       echo "tux-control post_install --config_prod"
