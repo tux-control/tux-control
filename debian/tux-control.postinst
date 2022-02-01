@@ -6,6 +6,18 @@ case "$1" in
     ;;
 
   configure)
+    if ! command -v systemctl &> /dev/null
+    then
+      echo "systemctl was not found, ignoring automatic setup"
+      echo "You need to make sure that postgresql and rabbitmq-server are running and run"
+      echo "tux-control post_install --config_prod"
+      echo "to setup your tux-control install"
+      echo "after that systemd services tux-control, tux-control_celeryworker, tux-control_celerybeat"
+      echo "needs to be started..."
+      exit 0
+    fi
+
+
     if [ -z "$2" ]; then
         if ! systemctl is-enabled --quiet postgresql; then
             systemctl enable postgresql
