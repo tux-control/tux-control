@@ -1,11 +1,7 @@
 import os
 import datetime
 import multiprocessing
-import netifaces
 import hashlib
-import math
-import psutil
-from typing import Generator
 
 
 def get_hash(content: bytes, length: int=32) -> str:
@@ -32,14 +28,6 @@ def get_mount_info(mount_path: str) -> dict:
     return ret
 
 
-def get_cpu_usage():
-    return psutil.cpu_percent(percpu=True)
-
-
-def get_ram_usage():
-    return psutil.virtual_memory()
-
-
 def directory_size(source: str) -> int:
     """
     Returns size of directory
@@ -60,37 +48,6 @@ def get_uptime() -> str:
     with open('/proc/uptime', 'r') as f:
         uptime_seconds = float(f.readline().split()[0])
         return str(datetime.timedelta(seconds=uptime_seconds))
-
-
-def get_interface_ip_address(if_name: str, net_type: int=netifaces.AF_INET) -> str:
-    addrs = netifaces.ifaddresses(if_name)
-    return addrs[net_type] if net_type in addrs else None
-
-
-def get_interface_list() -> list:
-    return netifaces.interfaces()
-
-
-def get_binding_ips() -> dict:
-    binds = {
-        '0.0.0.0': 'Everywhere IPv4',
-        '::': 'Everywhere IPv6',
-        '127.0.0.1': 'Localhost IPv4',
-        '::1': 'Localhost IPv6'
-    }
-
-    for interface in get_interface_list():
-        ipv4_addresses = get_interface_ip_address(interface)
-        ipv6_addresses = get_interface_ip_address(interface, netifaces.AF_INET6)
-        if ipv4_addresses:
-            ip_address_ipv4 = ipv4_addresses[0]['addr']
-            binds[ip_address_ipv4] = '{} ({})'.format(interface, ip_address_ipv4)
-
-        if ipv6_addresses:
-            ip_address_ipv6 = ipv6_addresses[0]['addr']
-            binds[ip_address_ipv6] = '{} ({})'.format(interface, ip_address_ipv6)
-
-    return binds
 
 
 def set_needs_reboot(needs_reboot: bool=True) -> None:
@@ -114,20 +71,6 @@ def is_reboot_needed() -> bool:
         return False
     except Exception:
         raise
-
-
-def get_interfaces_ip() -> list:
-    interface_list = []
-    for iface in get_interface_list():
-        if iface == 'lo':
-            continue
-        interface_list.append({
-            'name': iface,
-            'inet4': get_interface_ip_address(iface, netifaces.AF_INET),
-            'inet6': get_interface_ip_address(iface, netifaces.AF_INET6)
-        })
-
-    return interface_list
 
 
 def get_number_of_cores() -> int:
