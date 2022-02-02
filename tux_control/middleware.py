@@ -87,22 +87,6 @@ def user_loader_callback(identity) -> User:
     return User.query.get(identity['id'])
 
 
-@babel.localeselector
-def get_locale():
-    # if a user is logged in, use the locale from the user settings
-    user = getattr(g, 'user', None)
-    if user is not None:
-        return user.locale
-
-    if not has_request_context():
-        return current_app.config.get('LANGUAGE')
-
-    # otherwise try to guess the language from the user accept
-    # header the browser transmits.  We support de/fr/en in this
-    # example.  The best match wins.
-    return request.accept_languages.best_match(current_app.config['SUPPORTED_LANGUAGES'].keys(), current_app.config.get('LANGUAGE'))
-
-
 @babel.timezoneselector
 def get_timezone():
     if current_app.config['TIMEZONE']:
