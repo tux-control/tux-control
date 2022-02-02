@@ -2,7 +2,6 @@
 import logging
 
 import flask
-import os
 import datetime
 from tux_control.tools.jwt import jwt_required
 from flask_jwt_extended import create_access_token, \
@@ -10,7 +9,6 @@ from flask_jwt_extended import create_access_token, \
     create_refresh_token
 from tux_control.models.tux_control import User
 from tux_control.extensions import db, socketio
-from tux_control.tools.pam import UserRepository
 from tux_control.models.AuthorizedUser import AuthorizedUser
 
 __author__ = "Adam Schubert"
