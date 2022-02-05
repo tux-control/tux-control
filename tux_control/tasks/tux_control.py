@@ -17,6 +17,7 @@ THROTTLE = 1 * 60 * 60
 @celery.task(bind=True)
 @single_instance
 def package_manger_upgrade(self) -> None:
+
     socketio.emit('package_manager_upgrade_progress', {
         'total': 1,
         'processed': 1,

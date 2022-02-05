@@ -47,9 +47,11 @@ class Config(CeleryConfig):
     PORT = 5000
     HOST = '0.0.0.0'
 
+    DATA_STORAGE = '/tmp'
+
     JWT_ERROR_MESSAGE_KEY = 'message'
     JWT_TOKEN_LOCATION = ('headers', 'json', 'query_string')
-    JWT_QUERY_STRING_NAME = 'jwt_token'
+    JWT_QUERY_STRING_NAME = 'jwt'
     JWT_ACCESS_TOKEN_EXPIRES = False
 
     PERMISSIONS = {

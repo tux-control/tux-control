@@ -1,4 +1,5 @@
 import os
+import errno
 import datetime
 import multiprocessing
 import hashlib
@@ -26,6 +27,16 @@ def get_mount_info(mount_path: str) -> dict:
         ret['free'] = 0
 
     return ret
+
+
+def mkdir_p(path: str):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
 
 
 def directory_size(source: str) -> int:

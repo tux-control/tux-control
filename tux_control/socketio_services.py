@@ -11,5 +11,6 @@ all_socketio_services = (
     'authorization',
     'plugin',
     'plugin_config_item',
-    'permission'
+    'permission',
+    'file'
 )

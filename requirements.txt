@@ -4,6 +4,7 @@ python-socketio
 Flask-Babel
 flask-migrate
 raven
+python-magic
 pyyaml
 docopt
 celery
@@ -13,3 +14,4 @@ eventlet
 setuptools
 flask-cors
 flask-jwt-extended~=3.24.1
+file-thumbnailer[pdf]==0.0.8

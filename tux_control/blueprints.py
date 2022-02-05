@@ -24,5 +24,8 @@ def _factory(name, partial_module_string, url_prefix=None):
     return blueprint
 
 
+api_file = _factory('file', 'file', '/file')
+
 all_blueprints = (
+    api_file,
 )
