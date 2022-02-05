@@ -179,7 +179,7 @@ def download_file():
         path_info.absolute,
         path_info.mime_type,
         as_attachment=True,
-        download_name=path_info.name
+        attachment_filename=path_info.name
     ), 200
 
 
