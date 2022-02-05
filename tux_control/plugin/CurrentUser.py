@@ -1,4 +1,3 @@
-import os
 from flask_jwt_extended import get_current_user
 from tux_control.tools.acl import in_permissions
 from tux_control.tools.pam import SystemUserRepository, SystemUser

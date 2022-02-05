@@ -13,5 +13,6 @@ Flask-SQLAlchemy
 eventlet
 setuptools
 flask-cors
+python-pam
 flask-jwt-extended~=3.24.1
 file-thumbnailer[pdf]==0.0.8
