@@ -15,6 +15,7 @@ from file_thumbnailer.models.Dimensions import Dimensions
 from tux_control.application import STATIC_FOLDER
 from file_thumbnailer.exceptions import NotSupportedException
 from tux_control.models.FileInfo import FileInfo
+from tux_control.plugin.CurrentUser import CurrentUser
 
 
 __author__ = "Adam Schubert"
@@ -136,6 +137,8 @@ def upload_file():
 
             to_rename = os.path.join(parent_file_info.get('absolute'), chunk_file.filename)
             shutil.move(tmp_upload_file, to_rename)
+
+            CurrentUser.get_system_user().chown(to_rename)
 
             file_info = FileInfo.from_string(to_rename)
 
