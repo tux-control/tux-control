@@ -1,8 +1,7 @@
 import pwd
-import pam
 import os
 from pathlib import Path
-from typing import Union, Generator, Tuple
+from typing import Union, Generator
 
 
 class SystemUser:
@@ -14,6 +13,7 @@ class SystemUser:
         self.home_directory = self.password_database.pw_dir
         self.group_id = self.password_database.pw_gid
 
+    """
     def check_password(self, password: str) -> Tuple[str, Union[bool, None]]:
         p = pam.pam()
         if p.authenticate(self.username, password):
@@ -21,7 +21,7 @@ class SystemUser:
 
         else:
             return p.reason, False
-
+    """
     def chown(self, path: Union[Path, str]) -> None:
         os.chown(path, self.id, self.group_id)
 
