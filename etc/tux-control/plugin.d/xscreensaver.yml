@@ -1,3 +1,0 @@
-PACKAGE_CLASS: 'tux_control_plugin_xscreensaver.Plugin'
-CONFIG:
-  ALLOWED_SCREENSAVERS: []
