@@ -131,7 +131,6 @@ def do_create(data):
 
     # Create config
     try:
-        print(plugin_config_item)
         found_plugin.on_new_plugin_config_item(found_plugin.on_new_plugin_config_item_class.from_dict(plugin_config_item))
         socketio.emit('plugin-config-item/on-add', plugin_config_item, room=flask.request.sid)
     except SetException as e:

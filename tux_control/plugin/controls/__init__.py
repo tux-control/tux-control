@@ -9,6 +9,7 @@ from tux_control.plugin.controls.Select import Select
 from tux_control.plugin.controls.Slider import Slider
 from tux_control.plugin.controls.Text import Text
 from tux_control.plugin.controls.Url import Url
+from tux_control.plugin.controls.File import File
 
 
 controls = [
@@ -21,7 +22,8 @@ controls = [
     Select,
     Slider,
     Text,
-    Url
+    Url,
+    File
 ]
 
 
