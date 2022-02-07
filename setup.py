@@ -63,7 +63,7 @@ extra_files = [
 
 setup(
     name='tux-control',
-    version='0.0.15',
+    version='0.0.16',
     description='Tux Control',
     long_description=open('README.md').read(),
     author='Adam Schubert',
