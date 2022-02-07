@@ -66,7 +66,7 @@ class PluginConfigOption(IConfigOption, IDictify):
 
     @staticmethod
     def from_dict(data: dict) -> 'PluginConfigOption':
-        control = data.get('controls', {})
+        control = data.get('control', {})
 
         return PluginConfigOption(
             key=data.get('key'),
