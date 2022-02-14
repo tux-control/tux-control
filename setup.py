@@ -56,7 +56,7 @@ extra_files = [
         'migrations/alembic.ini',
         'views/*/templates/*',
         'views/*/templates/*/*',
-        'static/**'
+        'static/**/*'
 ]
 
 setup(
