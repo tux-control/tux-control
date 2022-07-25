@@ -12,7 +12,7 @@ __author__ = "Adam Schubert"
 
 @socketio.on('home/do-get-user-settings')
 @jwt_required
-def do_list_user_layouts(data):
+def do_get_user_settings(data):
     current_user = get_current_user()
 
-    socketio.emit('home/on-get-user-settings', current_user.jsonify(), room=flask.request.sid)
+    socketio.emit('home/on-get-user-settings', current_user.to_dict(), room=flask.request.sid)

@@ -118,7 +118,7 @@ def do_update_user(data):
 
     if found_user.id == current_user.id:
         # Current user was updated propagate it to websocket
-        socketio.emit('authorization/on-set-current-user', found_user.jsonify(), room=flask.request.sid)
+        socketio.emit('authorization/on-set-current-user', found_user.to_dict(), room=flask.request.sid)
 
     socketio.emit('user/on-update', found_user.to_dict(), room=flask.request.sid)
 
