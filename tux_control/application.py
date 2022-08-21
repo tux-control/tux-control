@@ -12,7 +12,7 @@ from yaml import load, SafeLoader
 from tux_control.tools.IDictify import IDictify
 
 import tux_control as app_root
-from tux_control.extensions import socketio, sentry, babel, db, migrate, celery, jwt, cors, plugin_manager
+from tux_control.extensions import socketio, babel, db, migrate, celery, jwt, cors, plugin_manager
 
 APP_ROOT_FOLDER = os.path.abspath(os.path.dirname(app_root.__file__))
 TEMPLATE_FOLDER = os.path.join(APP_ROOT_FOLDER, 'templates')
@@ -130,14 +130,11 @@ def create_app(config_obj, no_sql=False):
         json=MyJsonWrapper
     )
     socketio.init_app(app, message_queue=app.config['SOCKET_IO_MESSAGE_QUEUE'])
-    sentry.init_app(app)
     babel.init_app(app)
     celery.init_app(app)
     cors.init_app(app)
     jwt.init_app(app)
     plugin_manager.init_app(app, app_root_folder=APP_ROOT_FOLDER)
-
-    app.sentry = sentry
 
     with app.app_context():
         import_module('tux_control.middleware')

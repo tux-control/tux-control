@@ -7,7 +7,6 @@ import os
 from logging import getLogger
 import tux_control as app_root
 from flask_socketio import SocketIO
-from raven.contrib.flask import Sentry
 from flask_babel import Babel
 from flask_celery import Celery
 from flask_sqlalchemy import SQLAlchemy
@@ -23,7 +22,6 @@ MIGRATE_ROOT_FOLDER = os.path.abspath(os.path.join(APP_ROOT_FOLDER, 'migrations'
 
 
 socketio = SocketIO()
-sentry = Sentry()
 babel = Babel()
 celery = Celery()
 db = SQLAlchemy()
