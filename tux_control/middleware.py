@@ -85,11 +85,11 @@ def get_locale():
 if getattr(jwt, 'user_lookup_loader', None):
     @jwt.user_lookup_loader
     def user_loader_callback(jwt_header: dict, jwt_data: dict) -> User:
-        return User.query.get(int(jwt_data['sub']['id']))
+        return User.query.get(jwt_data['sub']['id'])
 elif getattr(jwt, 'user_loader_callback_loader', None):
     @jwt.user_loader_callback_loader
     def user_loader_callback_3(identity) -> User:
-        return User.query.get(int(identity['id']))
+        return User.query.get(identity['id'])
 
 
 @babel.timezoneselector
