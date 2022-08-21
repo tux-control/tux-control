@@ -1,11 +1,11 @@
 try:
-    from granad.tools.jwt_3 import jwt_required as jwt_required_3
+    from tux_control.tools.jwt_3 import jwt_required as jwt_required_3
     version_3_loaded = True
 except ImportError:
     version_3_loaded = False
 
 try:
-    from granad.tools.jwt_4 import jwt_required as jwt_required_4
+    from tux_control.tools.jwt_4 import jwt_required as jwt_required_4
     version_4_loaded = True
 except ImportError:
     version_4_loaded = False
