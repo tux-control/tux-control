@@ -11,7 +11,7 @@ __author__ = "Adam Schubert"
 
 
 @socketio.on('home/do-get-user-settings')
-@jwt_required
+@jwt_required()
 def do_get_user_settings(data):
     current_user = get_current_user()
 

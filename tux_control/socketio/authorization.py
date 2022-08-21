@@ -61,14 +61,14 @@ def do_login(data):
 
 
 @socketio.on('authorization/do-get-current-user')
-@jwt_required
+@jwt_required()
 def do_get_current_user(data):
     current_user = get_current_user()
     socketio.emit('authorization/on-get-current-user', current_user.to_dict(), room=flask.request.sid)
 
 
 @socketio.on('authorization/do-set-current-user')
-@jwt_required
+@jwt_required()
 def do_set_current_user(data):
     found_user = User.query.filter_by(id=get_current_user().id).one_or_none()
     found_user.email = data.get('email')
@@ -80,7 +80,7 @@ def do_set_current_user(data):
 
 
 @socketio.on('authorization/do-set-current-user-password')
-@jwt_required
+@jwt_required()
 def do_set_current_user_password(data):
     old_password = data.get('old_password')
     found_user = User.query.filter_by(id=get_current_user().id).one_or_none()

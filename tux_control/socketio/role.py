@@ -12,7 +12,7 @@ __author__ = "Adam Schubert"
 
 
 @socketio.on('role/do-list-all')
-@jwt_required
+@jwt_required()
 def do_list_all_role(data):
     order_by = sort_to_sqlalchemy(
         data.get('sort_field'),
@@ -57,7 +57,7 @@ def do_list_all_role(data):
 
 
 @socketio.on('role/do-get')
-@jwt_required
+@jwt_required()
 def do_get_role(data):
     role_detail = Role.query.filter_by(id=data.get('id')).first()
     if not role_detail:
@@ -73,7 +73,7 @@ def do_get_role(data):
 
 
 @socketio.on('role/do-update')
-@jwt_required
+@jwt_required()
 @permission_required('role.edit')
 def do_update_role(data):
 
@@ -97,7 +97,7 @@ def do_update_role(data):
 
 
 @socketio.on('role/do-create')
-@jwt_required
+@jwt_required()
 @permission_required('role.edit')
 def do_create_role(data):
     permissions = Permission.query.filter(Permission.id.in_([permission.get('id') for permission in data.get('permissions')])).all()
@@ -111,7 +111,7 @@ def do_create_role(data):
 
 
 @socketio.on('role/do-delete')
-@jwt_required
+@jwt_required()
 def do_delete_role(data):
     role_detail = Role.query.filter_by(id=data.get('id')).first()
     if not role_detail:

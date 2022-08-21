@@ -12,7 +12,7 @@ __author__ = "Adam Schubert"
 
 
 @socketio.on('permission/do-list-all')
-@jwt_required
+@jwt_required()
 def do_list_all_permission(data):
     # Sync permissions
 

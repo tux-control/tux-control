@@ -71,7 +71,7 @@ def get_range(bytes_range: str):
 
 
 @api_file.route('/upload', methods=['POST'])
-@jwt_required
+@jwt_required()
 @permission_required('file.edit')
 def begin_file_upload():
     parent_file = flask.request.json.get('parent_file', {})
@@ -96,7 +96,7 @@ def begin_file_upload():
 
 
 @api_file.route('/upload', methods=['PUT'])
-@jwt_required
+@jwt_required()
 @permission_required('file.edit')
 def upload_file():
     file_info = None
@@ -161,7 +161,7 @@ def upload_file():
 
 
 @api_file.route('/download', methods=['GET'])
-@jwt_required
+@jwt_required()
 @permission_required('file.read')
 def download_file():
     path_raw = flask.request.args.get('path')
@@ -184,7 +184,7 @@ def download_file():
 
 
 @api_file.route('/get', methods=['GET'])
-@jwt_required
+@jwt_required()
 @permission_required('file.read')
 def get_file():
     path_raw = flask.request.args.get('path')
@@ -211,7 +211,7 @@ def get_file():
 
 
 @api_file.route('/thumbnail', methods=['GET'])
-@jwt_required
+@jwt_required()
 @permission_required('file.read')
 def get_thumbnail():
     path_raw = flask.request.args.get('path')

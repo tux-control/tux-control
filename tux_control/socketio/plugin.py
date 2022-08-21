@@ -11,7 +11,7 @@ __author__ = "Adam Schubert"
 
 
 @socketio.on('plugin/do-list-all')
-@jwt_required
+@jwt_required()
 def do_list_all(data):
     response_data = []
     for key, plugin in plugin_manager.loaded_plugins.items():
@@ -23,7 +23,7 @@ def do_list_all(data):
 
 
 @socketio.on('plugin/do-get')
-@jwt_required
+@jwt_required()
 def do_get(data):
 
     found_plugin = plugin_manager.get_plugin(data.get('key'))

@@ -16,7 +16,7 @@ __author__ = "Adam Schubert"
 
 
 @socketio.on('file/do-list-all')
-@jwt_required
+@jwt_required()
 def do_list_all_file(data):
     settings = data.get('settings', {})
     reversed_sort_order = True if settings.get('sort_order', 1) == -1 else False
@@ -53,7 +53,7 @@ def do_list_all_file(data):
 
 
 @socketio.on('file/do-get-default')
-@jwt_required
+@jwt_required()
 def do_get_default_file(data):
     try:
         default_file_info = FileInfo.from_string(os.path.expanduser('~{}'.format(current_user.system_user)))
@@ -69,7 +69,7 @@ def do_get_default_file(data):
 
 
 @socketio.on('file/do-get')
-@jwt_required
+@jwt_required()
 def do_get_file(data):
 
     try:
@@ -86,7 +86,7 @@ def do_get_file(data):
 
 
 @socketio.on('file/do-update')
-@jwt_required
+@jwt_required()
 @permission_required('file.edit')
 def do_update_file(data):
     old_file_info_raw = data.get('old_file_info')
@@ -134,7 +134,7 @@ def do_update_file(data):
 
 
 @socketio.on('file/do-delete')
-@jwt_required
+@jwt_required()
 def do_delete_file(data):
     file_info_delete = FileInfo.from_string(data.get('absolute'))
 

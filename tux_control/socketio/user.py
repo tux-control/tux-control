@@ -13,7 +13,7 @@ __author__ = "Adam Schubert"
 
 
 @socketio.on('user/do-list-all')
-@jwt_required
+@jwt_required()
 def do_list_all_user(data):
     order_by = sort_to_sqlalchemy(
         data.get('sort_field'),
@@ -70,7 +70,7 @@ def do_list_all_user(data):
 
 
 @socketio.on('user/do-get')
-@jwt_required
+@jwt_required()
 def do_get_user(data):
     user_detail = User.query.filter_by(id=data.get('id')).first()
     if not user_detail:
@@ -86,7 +86,7 @@ def do_get_user(data):
 
 
 @socketio.on('user/do-update')
-@jwt_required
+@jwt_required()
 @permission_required('user.edit')
 def do_update_user(data):
     current_user = get_current_user()
@@ -124,7 +124,7 @@ def do_update_user(data):
 
 
 @socketio.on('user/do-create')
-@jwt_required
+@jwt_required()
 @permission_required('user.edit')
 def do_create_user(data):
     roles = Role.query.filter(Role.id.in_([role.get('id') for role in data.get('roles')])).all()
@@ -143,7 +143,7 @@ def do_create_user(data):
 
 
 @socketio.on('user/do-delete')
-@jwt_required
+@jwt_required()
 @permission_required('user.delete')
 def do_delete_user(data):
     user_detail = User.query.filter_by(id=data.get('id')).first()

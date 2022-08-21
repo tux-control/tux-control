@@ -13,7 +13,7 @@ __author__ = "Adam Schubert"
 
 
 @socketio.on('plugin-config-item/do-list-all')
-@jwt_required
+@jwt_required()
 def do_list_all(data):
     plugin_key = data.get('plugin_key')
     filters = data.get('filters')
@@ -53,7 +53,7 @@ def do_list_all(data):
 
 
 @socketio.on('plugin-config-item/do-get')
-@jwt_required
+@jwt_required()
 def do_get(data):
     plugin_key = data.get('plugin_key')
     key = data.get('key')
@@ -76,7 +76,7 @@ def do_get(data):
 
 
 @socketio.on('plugin-config-item/do-set')
-@jwt_required
+@jwt_required()
 def do_set(data):
     plugin_key = data.get('plugin_key')
     plugin_config_item = data.get('plugin_config_item')
@@ -111,7 +111,7 @@ def do_set(data):
 
 
 @socketio.on('plugin-config-item/do-add')
-@jwt_required
+@jwt_required()
 def do_create(data):
     plugin_key = data.get('plugin_key')
     plugin_config_item = data.get('plugin_config_item')
