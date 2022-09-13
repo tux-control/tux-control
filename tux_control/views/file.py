@@ -6,7 +6,7 @@ import uuid
 import re
 from pathlib import Path
 from flask_babel import gettext
-from flask_jwt_extended import current_user, jwt_required
+from tux_control.tools.jwt import jwt_required
 from tux_control.blueprints import api_file
 from tux_control.tools.helpers import mkdir_p
 from tux_control.tools.acl import permission_required
