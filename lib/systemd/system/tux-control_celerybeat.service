@@ -4,6 +4,8 @@ Requires=network.target
 
 [Service]
 Type=simple
+RuntimeDirectory=tux-control
+RuntimeDirectoryMode=0775
 Restart=on-failure
 RemainAfterExit=no
 RestartSec=5s
