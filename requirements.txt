@@ -13,4 +13,4 @@ eventlet
 setuptools
 flask-cors
 flask-jwt-extended~=3.24.1
-file-thumbnailer[pdf]==0.0.8
+file-thumbnailer[pdf]==0.0.9
