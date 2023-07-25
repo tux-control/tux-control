@@ -1,6 +1,9 @@
 [Unit]
 Description=Tux Control Web Service
 Requires=network.target
+After=rabbitmq-server.service
+StartLimitIntervalSec=300
+StartLimitBurst=5
 
 [Service]
 Type=simple
