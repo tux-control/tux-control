@@ -25,6 +25,7 @@ package:debian:
     - apt-get update -qy
     - apt-get install -y sudo python3-flask-celery-tools python3-dev dh-python python3-pip python3-stdeb python3-celery python3-markupsafe python3-eventlet python3-psycopg2 python3-dateutil python3-lxml python3-docopt python3-netifaces python3-yaml python3-raven python3-flask-migrate python3-flask-babel python3-socketio python3-flask-socketio python3-kombu rabbitmq-server python3-python-flask-jwt-extended python3-flask-cors python3-file-thumbnailer python3-fitz
     - rm -rf "./deb_dist"
+    - export DEB_BUILD_OPTIONS=nocheck
     - python3 setup.py --command-packages=stdeb.command bdist_deb
   tags:
     - debian
