@@ -48,7 +48,7 @@ def do_list_all_user(data):
         }
     )
 
-    paginator = users.filter(*users_filter).paginate(page, per_page)
+    paginator = users.filter(*users_filter).paginate(page=page, per_page=per_page)
 
     data_ret = []
     for user in paginator.items:

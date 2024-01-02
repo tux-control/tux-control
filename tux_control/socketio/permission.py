@@ -50,7 +50,7 @@ def do_list_all_permission(data):
         }
     )
 
-    paginator = permissions.filter(*permissions_filter).paginate(page, per_page)
+    paginator = permissions.filter(*permissions_filter).paginate(page=page, per_page=per_page)
 
     data_ret = []
     for permission in paginator.items:
