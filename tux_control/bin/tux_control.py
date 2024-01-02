@@ -68,9 +68,10 @@ from docopt import docopt
 from flask_migrate import stamp
 from celery.app.log import Logging
 from celery.utils.nodenames import default_nodename, host_format, node_format
+from pathlib import Path
 from tux_control.extensions import socketio, db, celery
 from tux_control.tasks.tux_control import package_manger_update
-from tux_control.tools.ConfigTxtParser import ConfigTxtParser
+from tux_control.tools.ConfigParser import ConfigParser
 from tux_control.application import create_app, get_config
 from tux_control.models.tux_control import Package, User, Role, Permission
 from tux_control.tools.packages import get_control_packages, refresh_package
@@ -307,100 +308,97 @@ def post_install():
     def get_random_password():
         return hashlib.md5(str(random.randint(0, sys.maxsize)).encode('UTF-8')).hexdigest()
 
-    configuration = {}
-    if os.path.isfile(config_path):
-        with open(config_path) as f:
-            loaded_data = yaml.load(f, Loader=yaml.SafeLoader)
-            if isinstance(loaded_data, dict):
-                configuration.update(loaded_data)
+    with ConfigParser(Path(config_path)) as config_parser:
+        # Generate rabbitmq access info for celery
+        celery_broker_url = config_parser.get('CELERY_BROKER_URL')
+        if not celery_broker_url:
+            celery_broker_username = 'tux_control_celery'
+            celery_broker_vhost = 'tux_control_celery'
+            celery_broker_password = get_random_password()
+            # Create rabbitmq user and vhost
+            subprocess.call(['rabbitmqctl', 'add_vhost', celery_broker_vhost])
+            subprocess.call(['rabbitmqctl', 'add_user', celery_broker_username, celery_broker_password])
+            subprocess.call(['rabbitmqctl', 'set_permissions', '-p', celery_broker_vhost, celery_broker_username, '.*', '.*', '.*'])
 
-    # Generate rabbitmq access info for celery
-    if 'CELERY_BROKER_URL' not in configuration or not configuration['CELERY_BROKER_URL']:
-        celery_broker_username = 'tux_control_celery'
-        celery_broker_vhost = 'tux_control_celery'
-        celery_broker_password = get_random_password()
-        # Create rabbitmq user and vhost
-        subprocess.call(['rabbitmqctl', 'add_vhost', celery_broker_vhost])
-        subprocess.call(['rabbitmqctl', 'add_user', celery_broker_username, celery_broker_password])
-        subprocess.call(['rabbitmqctl', 'set_permissions', '-p', celery_broker_vhost, celery_broker_username, '.*', '.*', '.*'])
+            config_parser['CELERY_BROKER_URL'] = 'amqp://{}:{}@127.0.0.1:5672/{}'.format(
+                celery_broker_username,
+                celery_broker_password,
+                celery_broker_vhost
+            )
 
-        configuration['CELERY_BROKER_URL'] = 'amqp://{}:{}@127.0.0.1:5672/{}'.format(
-            celery_broker_username,
-            celery_broker_password,
-            celery_broker_vhost
-        )
+            # We need to set DB config to make stamp work
+            app.config['CELERY_BROKER_URL'] = config_parser['CELERY_BROKER_URL']
+            config_parser.save()
 
-        # We need to set DB config to make stamp work
-        app.config['CELERY_BROKER_URL'] = configuration['CELERY_BROKER_URL']
+        # Generate rabbitmq access info for socketio message queue
+        socket_io_message_queue = config_parser.get('SOCKET_IO_MESSAGE_QUEUE')
+        if not socket_io_message_queue:
+            socket_io_message_queue_username = 'tux_control_socketio'
+            socket_io_message_queue_vhost = 'tux_control_socketio'
+            socket_io_message_queue_password = get_random_password()
+            # Create rabbitmq user and vhost
+            subprocess.call(['rabbitmqctl', 'add_vhost', socket_io_message_queue_vhost])
+            subprocess.call(['rabbitmqctl', 'add_user', socket_io_message_queue_username, socket_io_message_queue_password])
+            subprocess.call(
+                ['rabbitmqctl', 'set_permissions', '-p', socket_io_message_queue_vhost, socket_io_message_queue_username, '.*', '.*', '.*'])
 
-    # Generate rabbitmq access info for socketio message queue
-    if 'SOCKET_IO_MESSAGE_QUEUE' not in configuration or not configuration['SOCKET_IO_MESSAGE_QUEUE']:
-        socket_io_message_queue_username = 'tux_control_socketio'
-        socket_io_message_queue_vhost = 'tux_control_socketio'
-        socket_io_message_queue_password = get_random_password()
-        # Create rabbitmq user and vhost
-        subprocess.call(['rabbitmqctl', 'add_vhost', socket_io_message_queue_vhost])
-        subprocess.call(['rabbitmqctl', 'add_user', socket_io_message_queue_username, socket_io_message_queue_password])
-        subprocess.call(
-            ['rabbitmqctl', 'set_permissions', '-p', socket_io_message_queue_vhost, socket_io_message_queue_username, '.*', '.*', '.*'])
+            config_parser['SOCKET_IO_MESSAGE_QUEUE'] = 'amqp://{}:{}@127.0.0.1:5672/{}'.format(
+                socket_io_message_queue_username,
+                socket_io_message_queue_password,
+                socket_io_message_queue_vhost
+            )
 
-        configuration['SOCKET_IO_MESSAGE_QUEUE'] = 'amqp://{}:{}@127.0.0.1:5672/{}'.format(
-            socket_io_message_queue_username,
-            socket_io_message_queue_password,
-            socket_io_message_queue_vhost
-        )
+            # We need to set DB config to make stamp work
+            app.config['SOCKET_IO_MESSAGE_QUEUE'] = config_parser['SOCKET_IO_MESSAGE_QUEUE']
+            config_parser.save()
 
-        # We need to set DB config to make stamp work
-        app.config['SOCKET_IO_MESSAGE_QUEUE'] = configuration['SOCKET_IO_MESSAGE_QUEUE']
+        # Generate database and config if nothing is specified
+        sqlalchemy_database_uri = config_parser.get('SQLALCHEMY_DATABASE_URI')
+        if not sqlalchemy_database_uri:
+            # Create Database
+            database_username = 'tux_control'
+            database_name = 'tux_control'
+            database_password = get_random_password()
 
-    # Generate database and config if nothing is specified
-    if 'SQLALCHEMY_DATABASE_URI' not in configuration or not configuration['SQLALCHEMY_DATABASE_URI']:
-        # Create Database
-        database_username = 'tux_control'
-        database_name = 'tux_control'
-        database_password = get_random_password()
+            run_psql_command('CREATE USER {} WITH PASSWORD \'{}\';'.format(database_username, database_password))
+            run_psql_command('CREATE DATABASE {};'.format(database_name))
+            run_psql_command('GRANT ALL PRIVILEGES ON DATABASE {} TO {};'.format(database_name, database_username))
+            run_psql_command('GRANT ALL ON SCHEMA public TO {};'.format(database_username))
 
-        run_psql_command('CREATE USER {} WITH PASSWORD \'{}\';'.format(database_username, database_password))
-        run_psql_command('CREATE DATABASE {};'.format(database_name))
-        run_psql_command('GRANT ALL PRIVILEGES ON DATABASE {} TO {};'.format(database_name, database_username))
-        run_psql_command('GRANT ALL ON SCHEMA public TO {};'.format(database_username))
+            config_parser['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@127.0.0.1/{}'.format(
+                database_username,
+                database_password,
+                database_name
+            )
 
-        configuration['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@127.0.0.1/{}'.format(
-            database_username,
-            database_password,
-            database_name
-        )
+            # We need to set DB config to make stamp work
+            app.config['SQLALCHEMY_DATABASE_URI'] = config_parser['SQLALCHEMY_DATABASE_URI']
 
-        # We need to set DB config to make stamp work
-        app.config['SQLALCHEMY_DATABASE_URI'] = configuration['SQLALCHEMY_DATABASE_URI']
+            config_parser.save()
 
-        # Create empty database
-        with app.app_context():
-            db.create_all()
+            # Create empty database
+            with app.app_context():
+                db.create_all()
 
-        with app.app_context():
-            stamp()
+            with app.app_context():
+                stamp()
 
         # Generate secret key
-    if 'SECRET_KEY' not in configuration or not configuration['SECRET_KEY']:
-        app.config['SECRET_KEY'] = configuration['SECRET_KEY'] = get_random_password()
+        secret_key = config_parser.get('SECRET_KEY')
+        if not secret_key:
+            app.config['SECRET_KEY'] = config_parser['SECRET_KEY'] = get_random_password()
+            config_parser.save()
 
-    # Set port and host
-    if 'HOST' not in configuration or not configuration['HOST']:
-        configuration['HOST'] = '0.0.0.0'
+        # Set port and host
+        host = config_parser.get('HOST')
+        if not host:
+            config_parser['HOST'] = '0.0.0.0'
+            config_parser.save()
 
-    if 'PORT' not in configuration or not configuration['PORT']:
-        configuration['PORT'] = 80
-
-    # Write new configuration
-    with open(config_path, 'w') as f:
-        yaml.dump(configuration, f, default_flow_style=False, allow_unicode=True)
-
-    config_txt_path = os.path.join('/', 'boot', 'config.txt')
-    if os.path.isfile(config_txt_path):
-        config_txt = ConfigTxtParser(config_txt_path)
-        config_txt.set('dtparam', 'audio=on')
-        config_txt.save()
+        port = config_parser.get('PORT')
+        if not port:
+            config_parser['PORT'] = 80
+            config_parser.save()
 
 
 @command()

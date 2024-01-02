@@ -1,5 +1,5 @@
 
-class ConfigTxtParser(object):
+class ConfigTxtParser:
     configuration = {}
     inline_comments = {}
 
