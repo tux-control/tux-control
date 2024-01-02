@@ -15,11 +15,12 @@ Command details:
                                 then exit.
     celerybeat                  Run a Celery Beat periodic task scheduler.
     celeryworker                Run a Celery worker process.
-    list_routes                 List all available routes
-    post_install                Post install script
-    refresh_package_info        Post install script
-    db                          Migrations
-    user                        User control
+    list_routes                 List all available routes.
+    post_install                Post install script.
+    refresh_package_info        Post install script.
+    db                          Migrations.
+    user                        User control.
+    set_user                    Set/Create user from CLI.
 
 Usage:
     tux-control server [-p NUM] [-l DIR] [--config_prod]
@@ -30,6 +31,7 @@ Usage:
     tux-control post_install [--config_prod]
     tux-control create_all [--config_prod]
     tux-control user <action> <email> [--config_prod]
+    tux-control set_user <email> <password> <system_user> [--config_prod]
     tux-control refresh_package_info [--config_prod]
     tux-control db [<db_action>...] [--config_prod]
     tux-control (-h | --help)
@@ -63,7 +65,6 @@ import urllib.parse
 from functools import wraps
 
 import flask
-import yaml
 from docopt import docopt
 from flask_migrate import stamp
 from celery.app.log import Logging
@@ -400,6 +401,49 @@ def post_install():
         if not port:
             config_parser['PORT'] = 80
             config_parser.save()
+
+
+@command()
+def set_user():
+    password = OPTIONS['<password>']
+    system_user = OPTIONS['<system_user>']
+    email = OPTIONS['<email>']
+
+    admin_role_name = 'Admin'
+
+    found_admin_role = Role.query.filter_by(name=admin_role_name).one_or_none()
+    if not found_admin_role:
+        found_admin_role = Role()
+        found_admin_role.name = admin_role_name
+        db.session.add(found_admin_role)
+        db.session.commit()
+
+    for permission_raw_key, permission_raw_description in collect_permissions().items():
+        found_permission = Permission.query.filter_by(identifier=permission_raw_key).one_or_none()
+        if not found_permission:
+            found_permission = Permission()
+            found_permission.identifier = permission_raw_key
+        found_permission.name = permission_raw_description
+        found_permission.roles += [found_admin_role]
+        db.session.add(found_permission)
+
+    db.session.commit()
+
+    found_user = User.query.filter_by(email=email).first()
+    new = False
+    if not found_user:
+        new = True
+        found_user = User()
+    found_user.set_password(password)
+    found_user.email = email
+    found_user.system_user = system_user
+    found_user.full_name = ''
+    found_user.roles = [found_admin_role]
+
+    db.session.add(found_user)
+    db.session.commit()
+
+    print('User ID: {} {}.'.format(found_user.id, 'created' if new else 'updated'))
 
 
 @command()
