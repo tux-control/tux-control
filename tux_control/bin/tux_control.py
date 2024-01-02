@@ -363,6 +363,7 @@ def post_install():
         run_psql_command('CREATE USER {} WITH PASSWORD \'{}\';'.format(database_username, database_password))
         run_psql_command('CREATE DATABASE {};'.format(database_name))
         run_psql_command('GRANT ALL PRIVILEGES ON DATABASE {} TO {};'.format(database_name, database_username))
+        run_psql_command('GRANT ALL ON SCHEMA public TO {};'.format(database_username))
 
         configuration['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@127.0.0.1/{}'.format(
             database_username,
