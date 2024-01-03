@@ -410,40 +410,42 @@ def set_user():
     email = OPTIONS['<email>']
 
     admin_role_name = 'Admin'
+    options = parse_options()
+    app = create_app(options)
+    with app.app_context():
+        found_admin_role = Role.query.filter_by(name=admin_role_name).one_or_none()
+        if not found_admin_role:
+            found_admin_role = Role()
+            found_admin_role.name = admin_role_name
+            db.session.add(found_admin_role)
+            db.session.commit()
 
-    found_admin_role = Role.query.filter_by(name=admin_role_name).one_or_none()
-    if not found_admin_role:
-        found_admin_role = Role()
-        found_admin_role.name = admin_role_name
-        db.session.add(found_admin_role)
+        for permission_raw_key, permission_raw_description in collect_permissions().items():
+            found_permission = Permission.query.filter_by(identifier=permission_raw_key).one_or_none()
+            if not found_permission:
+                found_permission = Permission()
+                found_permission.identifier = permission_raw_key
+            found_permission.name = permission_raw_description
+            found_permission.roles += [found_admin_role]
+            db.session.add(found_permission)
+
         db.session.commit()
 
-    for permission_raw_key, permission_raw_description in collect_permissions().items():
-        found_permission = Permission.query.filter_by(identifier=permission_raw_key).one_or_none()
-        if not found_permission:
-            found_permission = Permission()
-            found_permission.identifier = permission_raw_key
-        found_permission.name = permission_raw_description
-        found_permission.roles += [found_admin_role]
-        db.session.add(found_permission)
+        found_user = User.query.filter_by(email=email).first()
+        new = False
+        if not found_user:
+            new = True
+            found_user = User()
+        found_user.set_password(password)
+        found_user.email = email
+        found_user.system_user = system_user
+        found_user.full_name = ''
+        found_user.roles = [found_admin_role]
 
-    db.session.commit()
+        db.session.add(found_user)
+        db.session.commit()
 
-    found_user = User.query.filter_by(email=email).first()
-    new = False
-    if not found_user:
-        new = True
-        found_user = User()
-    found_user.set_password(password)
-    found_user.email = email
-    found_user.system_user = system_user
-    found_user.full_name = ''
-    found_user.roles = [found_admin_role]
-
-    db.session.add(found_user)
-    db.session.commit()
-
-    print('User ID: {} {}.'.format(found_user.id, 'created' if new else 'updated'))
+        print('User ID: {} {}.'.format(found_user.id, 'created' if new else 'updated'))
 
 
 @command()
