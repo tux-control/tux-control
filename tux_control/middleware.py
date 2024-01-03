@@ -66,40 +66,9 @@ def add_hash_for_static_files(endpoint, values):
             values['hash'] = hash_cache[filename] = filehash
 
 
-@babel.localeselector
-def get_locale():
-    # if a user is logged in, use the locale from the user settings
-    user = getattr(g, 'user', None)
-    if user is not None:
-        return user.locale
-
-    if not has_request_context():
-        return current_app.config.get('LANGUAGE')
-
-    # otherwise try to guess the language from the user accept
-    # header the browser transmits.  We support de/fr/en in this
-    # example.  The best match wins.
-    return request.accept_languages.best_match(current_app.config['SUPPORTED_LANGUAGES'].keys(), current_app.config.get('LANGUAGE'))
-
-
-if getattr(jwt, 'user_lookup_loader', None):
-    @jwt.user_lookup_loader
-    def user_loader_callback(jwt_header: dict, jwt_data: dict) -> User:
-        return User.query.get(jwt_data['sub']['id'])
-elif getattr(jwt, 'user_loader_callback_loader', None):
-    @jwt.user_loader_callback_loader
-    def user_loader_callback_3(identity) -> User:
-        return User.query.get(identity['id'])
-
-
-@babel.timezoneselector
-def get_timezone():
-    if current_app.config['TIMEZONE']:
-        return current_app.config['TIMEZONE']
-
-    user = g.get('user', None)
-    if user is not None:
-        return user.timezone
+@jwt.user_lookup_loader
+def user_loader_callback(jwt_headers, jwt_payload) -> User:
+    return User.query.get(jwt_payload['sub']['id'])
 
 
 @current_app.template_filter('format_datetime')

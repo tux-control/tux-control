@@ -8,20 +8,6 @@ sys_conf_dir = os.getenv("SYSCONFDIR", "/etc")
 lib_dir = os.getenv("LIBDIR", "/usr/lib")
 
 
-def get_requirements(filename):
-    package_list = []
-    with open(os.path.join(filename), 'r') as rf:
-        for line in rf.readlines():
-            if line.startswith('git'):
-                git_url, package_name = line.split('#egg=')
-                # prefix line with package name
-                package_list.append('{} @ {}'.format(package_name, git_url))
-            else:
-                package_list.append(line)
-
-    return package_list
-
-
 def package_files(directory):
     paths = []
     for (path, directories, filenames) in os.walk(directory):
@@ -46,11 +32,6 @@ classes = """
 classifiers = [s.strip() for s in classes.split('\n') if s]
 
 
-install_requires = get_requirements('requirements.txt')
-if sys.version_info < (3, 0):
-    install_requires.append('futures')
-
-
 extra_files = [
         'templates/*',
         'migrations/alembic.ini',
@@ -70,9 +51,31 @@ setup(
     license='GPL-3',
     classifiers=classifiers,
     packages=find_packages(exclude=['tests', 'tests.*']),
-    install_requires=install_requires,
+    install_requires=[
+        'flask>=2.0.0,~=2.2.2',
+        'flask-socketio~=5.3.2',
+        'python-socketio~=5.7.2',  # Remove old version from my repository if this works
+        'Flask-Babel>=2.0.0',
+        'flask-migrate>=2.6.0,~=4.0.0',
+        'python-magic~=0.4',
+        'pyyaml~=6.0.1',
+        'docopt~=0.6.2',
+        'celery~=5.2.0',
+        'Flask-Celery-Tools',
+        'flask-sqlalchemy>=2.5.1,~=3.0.3',
+        'flask-jwt-extended~=4.4.4',  # Remove old version from my repository if this works
+        'file-thumbnailer[pdf]==0.0.9',
+        'eventlet',
+        'setuptools',
+        'flask-cors',
+        'psycopg2-binary~=2.9.5',
+        'markupsafe>=2.0.1',
+        'sqlalchemy~=1.4.46',
+    ],
     test_suite="tests",
-    tests_require=install_requires,
+    tests_require=[
+        'tox'
+    ],
     package_data={'tux_control': extra_files},
     entry_points={
         'console_scripts': [

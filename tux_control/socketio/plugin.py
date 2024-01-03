@@ -3,7 +3,6 @@
 
 import flask
 from tux_control.tools.jwt import jwt_required
-from flask_jwt_extended import get_current_user
 
 from tux_control.extensions import socketio, plugin_manager
 

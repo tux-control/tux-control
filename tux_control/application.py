@@ -123,6 +123,26 @@ def create_app(config_obj, no_sql=False):
         db.init_app(app)
 
     migrate.init_app(app, db)
+
+    def get_locale() -> str:
+        # if a user is logged in, use the locale from the user settings
+        user = getattr(g, 'user', None)
+        if user is not None:
+            return user.locale
+        # otherwise try to guess the language from the user accept
+        # header the browser transmits.  We support de/fr/en in this
+        # example.  The best match wins.
+        if request:
+            return request.accept_languages.best_match(['cs', 'en'])
+        else:
+            return app.config.get('BABEL_DEFAULT_LOCALE', 'cs')
+
+    if hasattr(babel, "localeselector"):
+        babel.init_app(app)
+        babel.localeselector(get_locale)
+    else:
+        babel.init_app(app, locale_selector=get_locale)
+
     socketio.init_app(
         app,
         message_queue=app.config['SOCKET_IO_MESSAGE_QUEUE'],
@@ -130,7 +150,6 @@ def create_app(config_obj, no_sql=False):
         json=MyJsonWrapper
     )
     socketio.init_app(app, message_queue=app.config['SOCKET_IO_MESSAGE_QUEUE'])
-    babel.init_app(app)
     celery.init_app(app)
     cors.init_app(app)
     jwt.init_app(app)

@@ -3,10 +3,6 @@ import errno
 import datetime
 import multiprocessing
 import hashlib
-import flask
-from werkzeug.urls import url_quote
-from werkzeug.datastructures import Headers
-import unicodedata
 
 
 def get_hash(content: bytes, length: int=32) -> str:
@@ -90,29 +86,3 @@ def is_reboot_needed() -> bool:
 
 def get_number_of_cores() -> int:
     return multiprocessing.cpu_count()
-
-
-def send_buffer_file(buffer, mimetype: str, attachment_filename: str):
-    headers = Headers()
-
-    try:
-        attachment_filename = attachment_filename.encode('latin-1')
-    except UnicodeEncodeError:
-        filenames = {
-            'filename': unicodedata.normalize(
-                'NFKD', attachment_filename).encode('latin-1', 'ignore'),
-            'filename*': "UTF-8''%s" % url_quote(attachment_filename),
-        }
-    else:
-        filenames = {'filename': attachment_filename}
-
-    headers.add('Content-Disposition', 'attachment', **filenames)
-    headers.add('Access-Control-Expose-Headers', 'Content-Disposition')
-
-    return flask.Response(
-        buffer,
-        content_type=mimetype,
-        mimetype=mimetype,
-        headers=headers
-    )
-
