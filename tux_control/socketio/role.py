@@ -35,7 +35,7 @@ def do_list_all_role(data):
         }
     )
 
-    paginator = roles.filter(*roles_filter).paginate(page, per_page)
+    paginator = roles.filter(*roles_filter).paginate(page=page, per_page=per_page)
 
     data_ret = []
     for role in paginator.items:
