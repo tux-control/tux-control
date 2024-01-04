@@ -201,6 +201,14 @@ def command(name: str = None):
 
     return function_wrap
 
+def _create_all(log):
+    tables_before = set(db.engine.table_names())
+    db.create_all()
+    tables_after = set(db.engine.table_names())
+    created_tables = tables_after - tables_before
+    for table in created_tables:
+        log.info('Created table: {}'.format(table))
+
 
 @command()
 def server():
@@ -301,6 +309,7 @@ def celeryworker():
 @command()
 def post_install():
     app = create_app(parse_options())
+    log = logging.getLogger(__name__)
     config_path = os.path.join('/', 'etc', 'tux-control', 'config.yml')
 
     def run_psql_command(sql):
@@ -378,11 +387,8 @@ def post_install():
 
             config_parser.save()
 
-            # Create empty database
             with app.app_context():
-                db.create_all()
-
-            with app.app_context():
+                _create_all(log)
                 stamp()
 
         # Generate secret key
@@ -561,12 +567,8 @@ def create_all():
     app = create_app(parse_options())
     log = logging.getLogger(__name__)
     with app.app_context():
-        tables_before = set(db.engine.table_names())
-        db.create_all()
-        tables_after = set(db.engine.table_names())
-    created_tables = tables_after - tables_before
-    for table in created_tables:
-        log.info('Created table: {}'.format(table))
+        _create_all(log)
+
 
 
 @command(name='db')
