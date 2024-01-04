@@ -201,6 +201,7 @@ def command(name: str = None):
 
     return function_wrap
 
+
 def _create_all(log):
     tables_before = set(db.engine.table_names())
     db.create_all()
@@ -308,7 +309,6 @@ def celeryworker():
 
 @command()
 def post_install():
-    app = create_app(parse_options())
     log = logging.getLogger(__name__)
     config_path = os.path.join('/', 'etc', 'tux-control', 'config.yml')
 
@@ -336,8 +336,6 @@ def post_install():
                 celery_broker_vhost
             )
 
-            # We need to set DB config to make stamp work
-            app.config['CELERY_BROKER_URL'] = config_parser['CELERY_BROKER_URL']
             config_parser.save()
 
         # Generate rabbitmq access info for socketio message queue
@@ -358,8 +356,6 @@ def post_install():
                 socket_io_message_queue_vhost
             )
 
-            # We need to set DB config to make stamp work
-            app.config['SOCKET_IO_MESSAGE_QUEUE'] = config_parser['SOCKET_IO_MESSAGE_QUEUE']
             config_parser.save()
 
         # Generate database and config if nothing is specified
@@ -382,19 +378,11 @@ def post_install():
                 database_name
             )
 
-            # We need to set DB config to make stamp work
-            app.config['SQLALCHEMY_DATABASE_URI'] = config_parser['SQLALCHEMY_DATABASE_URI']
-
             config_parser.save()
-
-            with app.app_context():
-                _create_all(log)
-                stamp()
 
         # Generate secret key
         secret_key = config_parser.get('SECRET_KEY')
         if not secret_key:
-            app.config['SECRET_KEY'] = config_parser['SECRET_KEY'] = get_random_password()
             config_parser.save()
 
         # Set port and host
@@ -407,6 +395,12 @@ def post_install():
         if not port:
             config_parser['PORT'] = 80
             config_parser.save()
+
+        # Config is created, lets create tables and stamp latest migration
+        app = create_app(parse_options())
+        with app.app_context():
+            _create_all(log)
+            stamp()
 
 
 @command()
