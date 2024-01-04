@@ -383,6 +383,7 @@ def post_install():
         # Generate secret key
         secret_key = config_parser.get('SECRET_KEY')
         if not secret_key:
+            config_parser['SECRET_KEY'] = get_random_password()
             config_parser.save()
 
         # Set port and host
